@@ -1,6 +1,3 @@
-"use client";
-
-import { Session } from "next-auth";
 import { BuyButton } from "@/components/ui";
 import {
   Card,
@@ -12,7 +9,7 @@ import {
 } from "@/components/shadcn-ui";
 import { Check } from "lucide-react";
 
-export const Pricing = ({ session }: { session: Session | null }) => {
+export const Pricing = () => {
   return (
     <div id="pricing" className="flex flex-col items-center justify-center">
       <h2 className="text-xl uppercase pb-4">
@@ -67,7 +64,7 @@ export const Pricing = ({ session }: { session: Session | null }) => {
           </ul>
         </CardContent>
         <CardFooter className="flex-col items-center">
-          <BuyButton session={session} />
+          <BuyButton />
           <p className="underline text-sm text-black/80">
             paiement en une fois, disponible à vie
           </p>

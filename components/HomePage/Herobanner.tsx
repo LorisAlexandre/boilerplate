@@ -1,11 +1,6 @@
-"use server";
-
-import { auth } from "@/lib/auth";
 // import { BuyButton } from "@/components/shadcn-ui";
 
 export const Herobanner = async () => {
-  const session = await auth();
-
   return (
     <div className="mt-10 flex flex-col gap-10 justify-center items-center">
       <h2 className="uppercase font-bold text-4xl text-center">

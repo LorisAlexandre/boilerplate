@@ -12,12 +12,12 @@ import {
   Proof,
 } from "@/components/HomePage";
 import { Button } from "@/components/shadcn-ui";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const session = await auth();
+  const session = await getSession();
 
   if (session?.user) {
     redirect("/account");
@@ -41,7 +41,7 @@ export default async function Home() {
       {/* <Proof /> */}
       <FeaturedOn />
       <WhyBuy />
-      <Pricing session={session} />
+      <Pricing />
       {/* <Testimonials /> */}
       <WhoAMI />
       <BottomPage />

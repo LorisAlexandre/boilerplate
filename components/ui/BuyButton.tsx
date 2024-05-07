@@ -1,61 +1,32 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { Button, ToastAction, useToast } from "@/components/shadcn-ui";
+import { Button } from "@/components/shadcn-ui";
 import { stripe } from "@/lib/stripe";
-import { Session } from "next-auth";
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export const BuyButton = ({ session }: { session: Session | null }) => {
-  const router = useRouter();
-  const { toast } = useToast();
+export const BuyButton = () => {
+  async function createCheckoutSession() {
+    "use server";
 
-  const handleCheckoutSession = async () => {
-    const user = session?.user;
-
-    if (!user) {
-      toast({
-        title: "You're not connected",
-        action: (
-          <ToastAction altText="Go to login page">
-            <Link href={"/auth/login"}>Login</Link>
-          </ToastAction>
-        ),
-      });
-      return;
-    }
-
-    const customerId = user?.stripeCustomerId;
-
-    if (!customerId) {
-      throw new Error("No customer Id");
-    }
-
-    const stripeSession = await stripe.checkout.sessions.create({
-      customer: customerId,
+    const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
-      success_url: `${process.env.SERV_URL}/success`,
-      cancel_url: `${process.env.SERV_URL}`,
+      success_url: `${process.env.SERV_URL}/checkEmail`,
+      cancel_url: `${process.env.SERV_URL}/cancel`,
       line_items: [
         {
           price: process.env.STRIPE_PRODUCT_ID,
           quantity: 1,
         },
       ],
-      discounts: [
-        {
-          coupon: process.env.STRIPE_PROMO_ID,
-        },
-      ],
     });
 
-    if (!stripeSession.url) {
-      throw new Error("No session created try later");
-    }
+    if (!session.url) throw new Error("session failed");
 
-    router.push(stripeSession.url);
-  };
+    redirect(session.url);
+  }
 
-  return <Button onClick={handleCheckoutSession}>Get Product</Button>;
+  return (
+    <form>
+      <Button formAction={createCheckoutSession}>Get Product</Button>
+    </form>
+  );
 };

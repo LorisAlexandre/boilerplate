@@ -1,35 +1,26 @@
-import { findUserFromCustomer, prisma } from "@/lib/db";
-import { User } from "@prisma/client";
+import { sendVerificationRequest } from "@/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { prisma } from "@/lib/db";
 
-export const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
   const body = (await req.json()) as Stripe.Event;
 
   switch (body.type) {
     case "checkout.session.completed": {
       const session = body.data.object as Stripe.Checkout.Session;
-      const stripeCustomerId = session.customer as string;
 
-      const user = await findUserFromCustomer(stripeCustomerId);
-
-      if (!user) {
-        break;
-      }
-
-      let plan: User["plan"] = "Premium";
-
-      if (session.amount_total! > 4999) {
-        plan = "Coach";
-      }
-
-      await prisma.user.update({
-        where: {
-          id: user?.id,
-        },
+      await prisma.user.create({
         data: {
-          plan,
+          email: session.customer_details?.email ?? "",
+          name: session.customer_details?.name ?? "",
+          password: "",
         },
+      });
+
+      sendVerificationRequest({
+        email: session.customer_details?.email ?? "",
+        name: session.customer_details?.name ?? "",
       });
 
       break;
@@ -43,4 +34,4 @@ export const POST = async (req: NextRequest) => {
   return NextResponse.json({
     result: true,
   });
-};
+}

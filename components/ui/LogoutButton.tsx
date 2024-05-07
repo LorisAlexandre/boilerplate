@@ -1,6 +1,18 @@
-import { signOut } from "next-auth/react";
 import { Button } from "@/components/shadcn-ui";
+import { logout } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export const LogoutButton = () => {
-  return <Button onClick={() => signOut()}>Se déconnecter</Button>;
+export const LogoutButton = async () => {
+  return (
+    <form>
+      <Button
+        formAction={async () => {
+          await logout();
+          redirect("/");
+        }}
+      >
+        Se déconnecter
+      </Button>
+    </form>
+  );
 };

@@ -1,11 +1,6 @@
-"use server";
-
-import { auth } from "@/lib/auth";
 import { BuyButton } from "@/components/ui";
 
-export const BottomPage = async () => {
-  const session = await auth();
-
+export const BottomPage = () => {
   return (
     <div className="flex flex-col justify-center gap-10 items-center">
       <h3 className="text-2xl text-center font-bold uppercase">
@@ -19,7 +14,7 @@ export const BottomPage = async () => {
         Ne perds plus ton temps en te dispersant, propulse tes coachings au
         niveau supérieur
       </p>
-      <BuyButton session={session} />
+      <BuyButton />
     </div>
   );
 };

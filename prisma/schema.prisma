@@ -1,70 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "mongodb"
-  url       = env("DIRECT_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                String  @id @default(cuid()) @map("_id")
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.String
-  session_state     String?
+model User {
+  id            String  @id @default(cuid()) @map("_id")
+  name          String?
+  email         String  @unique
+  password      String
+  emailVerified Boolean @default(false)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // plan props
+  plan Plans @default(None)
 
-  @@unique([provider, providerAccountId])
+  Session Session[]
+}
+
+enum Plans {
+  None
+  Premium
 }
 
 model Session {
-  id           String   @id @default(cuid()) @map("_id")
+  id String @id @default(cuid()) @map("_id")
+
   sessionToken String   @unique
   userId       String
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model VerificationToken {
-  id         String   @id @default(cuid()) @map("_id")
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-model User {
-  id            String    @id @default(cuid()) @map("_id")
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-
-  // Payments
-  stripeCustomerId String?
-  plan             UserPlan @default(None)
-
-  // Ici mettre les prop que tu veux 
-}
-
-enum UserPlan {
-  // mettre les plans ici
-  None
-  Guest
-  Premium
-  Coach
 }

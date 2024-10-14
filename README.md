@@ -6,5 +6,5 @@
 
 - **Intégration Stripe** : Paiements en ligne facilement gérés avec Stripe.
 - **Resend** : Service d'envoi d'emails transactionnels pour notifier vos utilisateurs.
-- **Authentification** : Authentification prête à l'emploi (OAuth, email, etc.), incluant des services comme Google.
+- **Authentification** : Authentification prête à l'emploi (credentials).
 - **Next.js** : Application fullstack basée sur le framework Next.js pour un rendu côté serveur performant et des pages statiques.
